@@ -14,7 +14,7 @@ inactiveR=subset(Resturant,Resturant$lic_status=="Inactive") #Table of inactive 
 # City Distribution
 city=aggregate(Resturant[,c(1)], by=list(Resturant$city), length) #Showing the frequency of restaurant in each city
 names(city)[names(city) == "x"] <- "number"
-pie(city$x, labels = city$number, main="City distribution") #Showing the Pie chart of city distribution
+pie(city$number, labels = city$number, main="City distribution") #Showing the Pie chart of city distribution
 
 #Map display
 locations=aggregate(list(count=Resturant$swc_sq_ft), list(lat=Resturant$latitude, lon=Resturant$longitude, place=Resturant$zip),FUN=sum) #aggregate the geo location
