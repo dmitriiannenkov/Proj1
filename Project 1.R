@@ -49,6 +49,16 @@ waffle(SS, rows=30, size=0.5,
        colors=c("thistle2", "darkolivegreen1", "#a0d0de", "cornflowerblue","#969696", "lightcyan2", "antiquewhite1", "aquamarine"), 
        title="Status of application distribution")
 
+#pre-COVID & post-COVID expired
+install.packages("lubridate")
+library(lubridate)
+Resturant$expiration_date=as.Date(Resturant$expiration_date)
+exp=subset(Resturant,Resturant$expiration_date<'2020-12-31') #expired application licenses
+act=subset(exp,exp$lic_status=="Active") # Active license which is expired
+inact=subset(exp,exp$lic_status=="Inactive") # inactive license which is expired
+plot(act$expiration_date)
+
+
 #Map display
 locations=aggregate(list(count=Restaurant$swc_sq_ft), list(lat=Restaurant$latitude, lon=Restaurant$longitude, place=Restaurant$zip),FUN=sum) #aggregate the geo location
 library(ggmap)
@@ -73,15 +83,27 @@ mapview(ASTORIAlocations_sf)#showing ASTORIA map
 
 
 #Load the .csv data
-zipda="https://raw.githubusercontent.com/nychealth/coronavirus-data/master/latest/last7days-by-modzcta.csv"
+zipda="https://raw.githubusercontent.com/nychealth/coronavirus-data/master/totals/data-by-modzcta.csv"
 zipda<-read.csv(zipda, header=TRUE,stringsAsFactors=F)
 zipda
 head(zipda)
 str(zipda)
 
+# City Distribution
+cityzz=aggregate(zipda[,c(4)], by=list(zipda$BOROUGH_GROUP), sum) #Showing the frequency of restaurant in each city
+Statuss <- paste(cityzz$Group.1,cityzz$x)
+stepviews <- data.frame(Statuss,cityzz)
+pie(stepviews$x, labels = stepviews$Statuss, main="City distribution")
+
 #Load the .csv data
-zipa="https://raw.githubusercontent.com/nychealth/coronavirus-data/master/latest/pp-by-modzcta.csv"
+zipa="https://data.cityofnewyork.us/resource/pitm-atqc.csv"
 zipa<-read.csv(zipa, header=TRUE,stringsAsFactors=F)
 zipa
 head(zipa)
 str(zipa)
+
+# City Distribution
+cityz=aggregate(zipa[,c(1)], by=list(zipa$borough), length) #Showing the frequency of restaurant in each city
+Statusss <- paste(cityz$Group.1,cityz$x)
+stepviewss <- data.frame(Statusss,cityz)
+pie(stepviewss$x, labels = stepviewss$Statusss, main="City distribution")
